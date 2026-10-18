@@ -9,7 +9,7 @@ export function saveLabel(html) {
   return id;
 }
 
-/** Lấy tem và xóa token ngay: mỗi link chỉ mở được 1 lần. */
+// tạo link in và xóa token ngay: mỗi link chỉ mở được 1 lần
 export function consumeLabel(id) {
   const item = store.get(id);
   if (!item) return null;
@@ -17,7 +17,7 @@ export function consumeLabel(id) {
   return item.expiresAt < Date.now() ? null : item.html;
 }
 
-// Dọn token chưa dùng đã hết hạn mỗi 10 phút
+// dọn token chưa dùng đã hết hạn mỗi 10 phút
 setInterval(() => {
   const now = Date.now();
   for (const [id, item] of store) {

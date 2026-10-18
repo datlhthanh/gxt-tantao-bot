@@ -11,7 +11,7 @@ export function printPackageHandler(bot) {
     if (!codes) return next();
 
     if (codes.length > MAX_CODES) {
-      return ctx.reply(`Tối đa ${MAX_CODES} bao mỗi lần, bạn gửi ${codes.length} bao.`);
+      return ctx.reply(`Tối đa ${MAX_CODES} mã bao mỗi lần, vui lòng tách bớt dùm :/`);
     }
 
     try {
@@ -19,15 +19,15 @@ export function printPackageHandler(bot) {
 
       if (packages.length === 0) {
         const detail = failed.map((f) => `${f.code}: ${f.reason}`).join('\n');
-        return ctx.reply(`Không lấy được bao nào:\n${detail}`);
+        return ctx.reply(`Không biết sao không lấy được mã bao nào:\n${detail}`);
       }
 
       const html = renderLabelsPage(packages);
       const replyParams = { message_id: ctx.message.message_id };
 
-      let caption = `Đã tạo ${packages.length} tem đóng bao (link chỉ mở được 1 lần)`;
+      let caption = `Đã tạo ${packages.length} mã đóng bao`;
       if (failed.length > 0) {
-        caption += `\n\nLỗi ${failed.length} bao:\n${failed
+        caption += `\n\nLỗi ${failed.length} mã bao:\n${failed
           .map((f) => `${f.code}: ${f.reason}`)
           .join('\n')}`;
       }
@@ -36,7 +36,7 @@ export function printPackageHandler(bot) {
         const url = `${config.server.publicBaseUrl}/print/${saveLabel(html)}`;
         await ctx.reply(caption, {
           reply_parameters: replyParams,
-          reply_markup: new InlineKeyboard().url('Mở trang in tem', url),
+          reply_markup: new InlineKeyboard().url('Link', url),
         });
       } else {
         await ctx.replyWithDocument(
@@ -45,8 +45,8 @@ export function printPackageHandler(bot) {
         );
       }
     } catch (error) {
-      console.error('Lỗi in tem đóng bao:', error);
-      await ctx.reply(`Có lỗi rồi: ${error.message}`);
+      console.error('Lỗi in mã đóng bao:', error);
+      await ctx.reply(`Có lỗi có lỗi: ${error.message}`);
     }
   });
 }

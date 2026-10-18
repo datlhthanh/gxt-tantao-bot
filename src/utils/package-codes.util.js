@@ -2,12 +2,9 @@
 // phía sau mã có thể có ghi chú ngăn cách bằng khoảng trắng (e, d, n...)
 const LINE_REGEX = /^(\d{2}[A-Z0-9]{8})(?:\s+.*)?$/i;
 
+// tối đa 30 mã bao mỗi lần
 export const MAX_CODES = 30;
 
-/**
- * Trả về mảng mã bao (viết hoa, đã loại trùng) nếu MỌI dòng đều hợp lệ.
- * Trả về null nếu tin nhắn không phải danh sách mã bao.
- */
 export function parsePackageCodes(text) {
   const lines = text
     .split('\n')

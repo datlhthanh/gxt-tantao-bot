@@ -4,7 +4,7 @@ import { consumeLabel } from '../services/label-store.service.js';
 
 function notFound(res) {
   res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-  res.end('Link đã được sử dụng hoặc hết hạn. Gửi lại mã bao để lấy link mới.');
+  res.end('Link không hợp lệ hoặc đã hết hạn (chỉ mở được 1 lần)');
 }
 
 export function startServer() {

@@ -15,7 +15,7 @@ const authorization = withBearer(process.env.AUTHORIZATION_TOKEN.trim());
 
 export const config = {
   botToken: process.env.BOT_TOKEN,
-  ghn: {
+  gxt: {
     authorization,
     warehouseId,
   },
