@@ -22,7 +22,7 @@ export function printA5OrderHandler(bot) {
 
       await ctx.reply('In phiếu trả hàng A5', {
         reply_parameters: { message_id: ctx.message.message_id },
-        reply_markup: new InlineKeyboard().url('Link', printUrl),
+        reply_markup: new InlineKeyboard().url('In A5', printUrl),
       });
     } catch (error) {
       console.error('Lỗi in A5:', error);

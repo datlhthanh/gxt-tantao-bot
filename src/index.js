@@ -1,9 +1,15 @@
 import { bot } from './bot.js';
+import { startServer } from './server/print-page.server.js';
+
+const server = startServer();
 
 bot.start({
-  onStart: (info) => console.log(`Bot @${info.username} đã khởi động thành công!`),
+  onStart: (info) => console.log(`Bot @${info.username} đang chạy`),
 });
 
-// Tắt an toàn khi PM2/hệ thống gửi tín hiệu dừng
-process.once('SIGINT', () => bot.stop());
-process.once('SIGTERM', () => bot.stop());
+function shutdown() {
+  bot.stop();
+  server?.close();
+}
+process.once('SIGINT', shutdown);
+process.once('SIGTERM', shutdown);

@@ -9,14 +9,12 @@ const PRINT_URL = 'https://online-gateway.ghn.vn/a5/public-api/printA5';
  * @returns {Promise<string>} printUrl
  */
 export async function getPrintA5Url(orderCodes) {
-  const auth = config.gxt.authorization;
-  
   const res = await fetch(GEN_TOKEN_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-warehouseid': config.gxt.warehouseId,
-      authorization: auth.startsWith('Bearer ') ? auth : `Bearer ${auth}`,
+      authorization: config.gxt.authorization,
     },
     body: JSON.stringify({ order_codes: orderCodes.join(',') }),
   });
