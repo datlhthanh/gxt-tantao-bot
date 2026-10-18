@@ -25,7 +25,7 @@ export function printPackageHandler(bot) {
       const html = renderLabelsPage(packages);
       const replyParams = { message_id: ctx.message.message_id };
 
-      let caption = `Đã tạo ${packages.length} tem đóng bao`;
+      let caption = `Đã tạo ${packages.length} tem đóng bao (link chỉ mở được 1 lần)`;
       if (failed.length > 0) {
         caption += `\n\nLỗi ${failed.length} bao:\n${failed
           .map((f) => `${f.code}: ${f.reason}`)

@@ -4,22 +4,20 @@ import { config } from '../app.config.js';
 const store = new Map(); // id -> { html, expiresAt }
 
 export function saveLabel(html) {
-  const id = randomBytes(12).toString('base64url');
+  const id = randomBytes(24).toString('base64url');
   store.set(id, { html, expiresAt: Date.now() + config.server.labelTtlMs });
   return id;
 }
 
-export function getLabel(id) {
+/** Lấy tem và xóa token ngay: mỗi link chỉ mở được 1 lần. */
+export function consumeLabel(id) {
   const item = store.get(id);
   if (!item) return null;
-  if (item.expiresAt < Date.now()) {
-    store.delete(id);
-    return null;
-  }
-  return item.html;
+  store.delete(id);
+  return item.expiresAt < Date.now() ? null : item.html;
 }
 
-// Dọn tem hết hạn mỗi 10 phút; unref để không giữ tiến trình sống
+// Dọn token chưa dùng đã hết hạn mỗi 10 phút
 setInterval(() => {
   const now = Date.now();
   for (const [id, item] of store) {

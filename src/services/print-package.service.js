@@ -8,14 +8,17 @@ const SOURCE = 'INSIDE_WEB_APP/ktc-van-tai/package/print';
  * @param {string} packageCode
  */
 export async function getPackage(packageCode) {
-  const url = new URL(API_URL);
-  url.searchParams.set('packageCode', packageCode);
-  url.searchParams.set('locationId', config.inside.locationId);
-  url.searchParams.set('locationType', 'GHN_HUB');
-  url.searchParams.set('source', SOURCE);
+  const url =
+    `${API_URL}?packageCode=${encodeURIComponent(packageCode)}` +
+    `&locationId=${config.inside.locationId}` +
+    `&locationType=GHN_HUB` +
+    `&source=${SOURCE}`;
 
   const res = await fetch(url, {
-    headers: { authorization: config.inside.authorization },
+    headers: {
+      accept: 'application/json',
+      authorization: config.inside.authorization,
+    },
     signal: AbortSignal.timeout(10_000),
   });
 

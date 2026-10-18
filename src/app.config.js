@@ -15,7 +15,7 @@ const authorization = withBearer(process.env.AUTHORIZATION_TOKEN.trim());
 
 export const config = {
   botToken: process.env.BOT_TOKEN,
-  gxt: {
+  ghn: {
     authorization,
     warehouseId,
   },
@@ -26,6 +26,7 @@ export const config = {
     locationId: process.env.INSIDE_LOCATION_ID || warehouseId,
   },
   server: {
+    host: process.env.HOST || '127.0.0.1',
     port: Number(process.env.PORT) || 3000,
     publicBaseUrl: (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, ''),
     labelTtlMs: 24 * 60 * 60 * 1000,

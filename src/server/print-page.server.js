@@ -1,30 +1,35 @@
 import { createServer } from 'node:http';
 import { config } from '../app.config.js';
-import { getLabel } from '../services/label-store.service.js';
+import { consumeLabel } from '../services/label-store.service.js';
+
+function notFound(res) {
+  res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+  res.end('Link đã được sử dụng hoặc hết hạn. Gửi lại mã bao để lấy link mới.');
+}
 
 export function startServer() {
-  // Chưa cấu hình link công khai thì không mở cổng
   if (!config.server.publicBaseUrl) return null;
 
   const server = createServer((req, res) => {
-    const match = req.method === 'GET' && req.url?.match(/^\/print\/([\w-]+)$/);
-    const html = match ? getLabel(match[1]) : null;
+    const match = req.url?.match(/^\/print\/([\w-]+)$/);
 
-    if (!html) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      return res.end('Link không tồn tại hoặc đã hết hạn');
-    }
+    // Chỉ GET mới tiêu token (HEAD/OPTIONS không làm mất link)
+    if (!match || req.method !== 'GET') return notFound(res);
+
+    const html = consumeLabel(match[1]);
+    if (!html) return notFound(res);
 
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store',
+      'Referrer-Policy': 'no-referrer',
       'X-Robots-Tag': 'noindex',
     });
     res.end(html);
   });
 
-  server.listen(config.server.port, () =>
-    console.log(`Web server đang chạy ở cổng ${config.server.port}`),
+  server.listen(config.server.port, config.server.host, () =>
+    console.log(`Web server: ${config.server.host}:${config.server.port}`),
   );
 
   return server;
