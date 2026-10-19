@@ -1,4 +1,5 @@
 import { config } from '../app.config.js';
+import { getToken } from './token.service.js';
 
 const GEN_TOKEN_URL = 'https://nhanh-api.ghn.vn/api/lastmile/order/gen-a5-token';
 const PRINT_URL = 'https://online-gateway.ghn.vn/a5/public-api/printA5';
@@ -14,7 +15,7 @@ export async function getPrintA5Url(orderCodes) {
     headers: {
       'Content-Type': 'application/json',
       'x-warehouseid': config.gxt.warehouseId,
-      authorization: config.gxt.authorization,
+      'authorization': getToken(),
     },
     body: JSON.stringify({ order_codes: orderCodes.join(',') }),
   });

@@ -19,6 +19,11 @@ export function printPackageHandler(bot) {
 
       if (packages.length === 0) {
         const detail = failed.map((f) => `${f.code}: ${f.reason}`).join('\n');
+
+        if (detail.includes('Access token is invalid')) {
+          return ctx.reply('Hình như token hết hạn, vui lòng khởi chạy /updatetoken');
+        }
+
         return ctx.reply(`Không biết sao không lấy được mã bao nào:\n${detail}`);
       }
 

@@ -1,4 +1,5 @@
 import { config } from '../app.config.js';
+import { getToken } from './token.service.js';
 
 const API_URL = 'https://inside-prd-api.ghn.vn/pms/v1/package/multi';
 const SOURCE = 'INSIDE_WEB_APP/ktc-van-tai/package/print';
@@ -17,7 +18,7 @@ export async function getPackage(packageCode) {
   const res = await fetch(url, {
     headers: {
       accept: 'application/json',
-      authorization: config.inside.authorization,
+      'authorization': getToken(),
     },
     signal: AbortSignal.timeout(10_000),
   });
