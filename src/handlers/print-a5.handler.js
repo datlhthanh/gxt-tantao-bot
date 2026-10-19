@@ -7,10 +7,10 @@ export function printA5OrderHandler(bot) {
     const lines = text.split('\n').map((line) => line.trim());
     const lastLine = lines[lines.length - 1].toLowerCase();
 
-    // Không phải yêu cầu "in" thì bỏ qua, cho handler khác xử lý
+    // không phải yêu cầu "in/In" thì bỏ qua, cho handler khác xử lý
     if (lastLine !== 'in') return next();
 
-    // Lấy mã đơn bắt đầu bằng GY, không trùng
+    // lấy mã đơn bắt đầu bằng GY, không trùng
     const orderCodes = [...new Set(text.match(/GY[A-Z0-9]+/g) ?? [])];
 
     if (orderCodes.length === 0) {
@@ -22,7 +22,7 @@ export function printA5OrderHandler(bot) {
 
       await ctx.reply('In phiếu trả hàng A5', {
         reply_parameters: { message_id: ctx.message.message_id },
-        reply_markup: new InlineKeyboard().url('In A5', printUrl),
+        reply_markup: new InlineKeyboard().url('Link', printUrl),
       });
     } catch (error) {
       console.error('Lỗi in A5:', error);
