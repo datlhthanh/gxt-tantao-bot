@@ -1,7 +1,7 @@
-import { formatVN } from '../utils/datetime.util.js';
-import { escapeHtml } from '../utils/html.util.js';
+import { formatVN } from "../utils/datetime.util.js";
+import { escapeHtml } from "../utils/html.util.js";
 
-const BARCODE_BASE = 'https://barcode.ghn.vn/api/v1/barcode/generate';
+const BARCODE_BASE = "https://barcode.ghn.vn/api/v1/barcode/generate";
 
 const CSS = `
 * { box-sizing: border-box; }
@@ -43,8 +43,8 @@ function barcodeUrl(code, type, size) {
 function renderHalf({ code, createdTime, firstmileSortCode, routeCode }) {
   const prefix = firstmileSortCode
     ? `<span class="firstmilePrefix">${escapeHtml(firstmileSortCode)}x</span>`
-    : '';
-  const twoChars = String(routeCode ?? '').length > 1 ? ' two-chars' : '';
+    : "";
+  const twoChars = String(routeCode ?? "").length > 1 ? " two-chars" : "";
 
   return `
     <div class="viewTop">
@@ -55,7 +55,7 @@ function renderHalf({ code, createdTime, firstmileSortCode, routeCode }) {
           <span class="routeCodeInner">${prefix}${escapeHtml(routeCode)}</span>
         </div>
         <div class="viewTopInfo-side">
-          <img src="${barcodeUrl(code, 'QR', 'width=140;height=140')}">
+          <img src="${barcodeUrl(code, "QR", "width=140;height=140")}">
         </div>
       </div>
       <div class="package-code"><p>${escapeHtml(code)}</p></div>
@@ -69,7 +69,7 @@ function renderLabel(pkg) {
     <div>${half}</div>
     <div class="viewBarcode">
       <div class="viewLineBarCodeLeft"><div class="viewBarCode__line"></div></div>
-      <div><img src="${barcodeUrl(pkg.code, 'C128A', 'width=600;height=236')}"></div>
+      <div><img src="${barcodeUrl(pkg.code, "C128A", "width=600;height=236")}"></div>
       <div class="viewLineBarCodeRight"><div class="viewBarCode__line"></div></div>
     </div>
     <div class="invert-heading">${half}</div>
@@ -90,7 +90,7 @@ export function renderLabelsPage(packages) {
   <style>${CSS}</style>
 </head>
 <body>
-  ${packages.map(renderLabel).join('\n')}
+  ${packages.map(renderLabel).join("\n")}
   <script>
     window.addEventListener('load', () => setTimeout(() => window.print(), 300));
   </script>

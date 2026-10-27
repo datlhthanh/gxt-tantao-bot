@@ -7,7 +7,7 @@ export const MAX_CODES = 30;
 
 export function parsePackageCodes(text) {
   const lines = text
-    .split('\n')
+    .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
 

@@ -1,10 +1,10 @@
-import { randomBytes } from 'node:crypto';
-import { config } from '../app.config.js';
+import { randomBytes } from "node:crypto";
+import { config } from "../app.config.js";
 
 const store = new Map(); // id -> { html, expiresAt }
 
 export function saveLabel(html) {
-  const id = randomBytes(24).toString('base64url');
+  const id = randomBytes(24).toString("base64url");
   store.set(id, { html, expiresAt: Date.now() + config.server.labelTtlMs });
   return id;
 }
@@ -18,9 +18,12 @@ export function consumeLabel(id) {
 }
 
 // dọn token chưa dùng đã hết hạn mỗi 10 phút
-setInterval(() => {
-  const now = Date.now();
-  for (const [id, item] of store) {
-    if (item.expiresAt < now) store.delete(id);
-  }
-}, 10 * 60 * 1000).unref();
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [id, item] of store) {
+      if (item.expiresAt < now) store.delete(id);
+    }
+  },
+  10 * 60 * 1000,
+).unref();

@@ -1,6 +1,6 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { config, withBearer } from '../app.config.js';
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import { config, withBearer } from "../app.config.js";
 
 const JWT_REGEX = /^(?:Bearer\s+)?([\w-]+\.([\w-]+)\.[\w-]+)$/;
 
@@ -8,10 +8,14 @@ let current = load();
 
 function load() {
   try {
-    const saved = JSON.parse(readFileSync(config.tokenFile, 'utf-8'));
+    const saved = JSON.parse(readFileSync(config.tokenFile, "utf-8"));
     if (saved.token) return saved.token;
-  } catch {
-    // chưa có file
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      throw new Error(`Không đọc được file token: ${error.message}`, {
+        cause: error,
+      });
+    }
   }
   const seed = process.env.AUTHORIZATION_TOKEN?.trim();
   return seed ? withBearer(seed) : null;
@@ -20,7 +24,7 @@ function load() {
 // báo lỗi nếu chư có token
 export function getToken() {
   if (!current) {
-    throw new Error('Chưa có token GHN. Dùng /updatetoken để cài đặt.');
+    throw new Error("Chưa có token GHN. Dùng /updatetoken để cài đặt.");
   }
   return current;
 }
@@ -31,18 +35,18 @@ export function getToken() {
  */
 export function parseToken(raw) {
   const match = raw.trim().match(JWT_REGEX);
-  if (!match) return { ok: false, reason: 'Token sai định dạng.' };
+  if (!match) return { ok: false, reason: "Token sai định dạng." };
 
   let expiresAt = null;
   try {
-    const payload = JSON.parse(Buffer.from(match[2], 'base64url').toString());
+    const payload = JSON.parse(Buffer.from(match[2], "base64url").toString());
     if (payload.exp) expiresAt = new Date(payload.exp * 1000);
   } catch {
     // không đọc được payload thì bỏ qua kiểm tra hạn
   }
 
   if (expiresAt && expiresAt < new Date()) {
-    return { ok: false, reason: 'Token này đã hết hạn, hãy lấy token mới.' };
+    return { ok: false, reason: "Token này đã hết hạn, hãy lấy token mới!" };
   }
 
   return { ok: true, token: withBearer(match[1]), expiresAt };

@@ -1,5 +1,5 @@
-import { bot } from './bot.js';
-import { startServer } from './server/print-page.server.js';
+import { bot } from "./bot.js";
+import { startServer } from "./server/print-page.server.js";
 
 const server = startServer();
 
@@ -11,5 +11,5 @@ function shutdown() {
   bot.stop();
   server?.close();
 }
-process.once('SIGINT', shutdown);
-process.once('SIGTERM', shutdown);
+process.once("SIGINT", shutdown);
+process.once("SIGTERM", shutdown);

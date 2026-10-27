@@ -1,8 +1,8 @@
-import { config } from '../app.config.js';
-import { getToken } from './token.service.js';
+import { config } from "../app.config.js";
+import { getToken } from "./token.service.js";
 
-const API_URL = 'https://inside-prd-api.ghn.vn/pms/v1/package/multi';
-const SOURCE = 'INSIDE_WEB_APP/ktc-van-tai/package/print';
+const API_URL = "https://inside-prd-api.ghn.vn/pms/v1/package/multi";
+const SOURCE = "INSIDE_WEB_APP/ktc-van-tai/package/print";
 
 /**
  * Lấy thông tin 1 bao, chỉ giữ các trường cần để in tem.
@@ -17,20 +17,20 @@ export async function getPackage(packageCode) {
 
   const res = await fetch(url, {
     headers: {
-      accept: 'application/json',
-      'authorization': getToken(),
+      accept: "application/json",
+      authorization: getToken(),
     },
     signal: AbortSignal.timeout(10_000),
   });
 
   const json = await res.json().catch(() => null);
 
-  if (!res.ok || json?.status !== 'OK') {
+  if (!res.ok || json?.status !== "OK") {
     throw new Error(json?.message || `GHN trả về lỗi HTTP ${res.status}`);
   }
 
   const pkg = json.data?.[0];
-  if (!pkg) throw new Error('Không tìm thấy bao');
+  if (!pkg) throw new Error("Không tìm thấy bao");
 
   return {
     code: pkg.code,
@@ -51,7 +51,7 @@ export async function getPackages(codes) {
   const failed = [];
 
   results.forEach((result, i) => {
-    if (result.status === 'fulfilled') {
+    if (result.status === "fulfilled") {
       packages.push(result.value);
     } else {
       failed.push({ code: codes[i], reason: result.reason.message });
