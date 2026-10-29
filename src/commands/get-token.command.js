@@ -1,7 +1,6 @@
 import { getToken } from "../services/token.service.js";
 import { escapeHtml } from "../utils/html.util.js";
-
-const ALLOWED_USER_ID = 8807703123;
+import { ALLOWED_USER_ID } from "../constants.js";
 
 export function getTokenCommand(bot) {
   bot.command("gettoken", async (ctx) => {

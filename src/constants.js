@@ -1,0 +1,1 @@
+export const ALLOWED_USER_ID = 8807703123;

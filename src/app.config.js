@@ -19,6 +19,8 @@ export const config = {
   gxt: { warehouseId },
   inside: { locationId: process.env.INSIDE_LOCATION_ID || warehouseId },
   tokenFile: process.env.TOKEN_FILE || "data/token.json",
+  announcementGroupsFile:
+    process.env.ANNOUNCEMENT_GROUPS_FILE || "data/announcement-groups.json",
   server: {
     host: process.env.HOST || "127.0.0.1",
     port,

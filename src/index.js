@@ -1,10 +1,14 @@
 import { bot } from "./bot.js";
 import { startServer } from "./server/print-page.server.js";
+import { startAnnouncementScheduler } from "./services/announcement-scheduler.service.js";
 
 const server = startServer();
 
 bot.start({
-  onStart: (info) => console.log(`Bot @${info.username} đang chạy`),
+  onStart: (info) => {
+    console.log(`Bot @${info.username} đang chạy`);
+    startAnnouncementScheduler(bot);
+  },
 });
 
 function shutdown() {
