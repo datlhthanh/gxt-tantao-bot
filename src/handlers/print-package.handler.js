@@ -3,12 +3,19 @@ import { config } from "../app.config.js";
 import { saveLabel } from "../services/label-store.service.js";
 import { getPackages } from "../services/print-package.service.js";
 import { renderLabelsPage } from "../templates/package-label.template.js";
-import { MAX_CODES, parsePackageCodes } from "../utils/package-codes.util.js";
+import { MAX_CODES, parsePackageInput } from "../utils/package-codes.util.js";
 
 export function printPackageHandler(bot) {
   bot.on("message:text", async (ctx, next) => {
-    const codes = parsePackageCodes(ctx.message.text);
-    if (!codes) return next();
+    const text = ctx.message.text;
+    const { codes, invalidLines } = parsePackageInput(text);
+    if (codes.length === 0 && invalidLines.length === 0) {
+      return next();
+    }
+
+    if (invalidLines.length > 0) {
+      return ctx.reply(`Mã bao không hợp lệ:\n${invalidLines.join("\n")}`);
+    }
 
     if (codes.length > MAX_CODES) {
       return ctx.reply(
@@ -19,27 +26,22 @@ export function printPackageHandler(bot) {
     try {
       const { packages, failed } = await getPackages(codes);
 
-      if (packages.length === 0) {
-        const detail = failed.map((f) => `${f.code}: ${f.reason}`).join("\n");
+      const detail = failed.map((f) => `${f.code}: ${f.reason}`).join("\n");
 
-        if (detail.includes("Access token is invalid")) {
-          return ctx.reply(
-            "Token hết hạn, vui lòng sử dụng lệnh /updatetoken để cập nhật lại.",
-          );
-        }
+      if (detail.includes("Access token is invalid")) {
+        return ctx.reply(
+          "Token hết hạn, vui lòng sử dụng lệnh /updatetoken để cập nhật lại.",
+        );
+      }
 
-        return ctx.reply(`Không lấy được mã bao nào:\n${detail}`);
+      if (failed.length > 0) {
+        return ctx.reply(`Không in được mã bao:\n${detail}`);
       }
 
       const html = renderLabelsPage(packages);
       const replyParams = { message_id: ctx.message.message_id };
 
-      let caption = `Đã tạo ${packages.length} mã bao`;
-      if (failed.length > 0) {
-        caption += `\n\nLỗi ${failed.length} mã bao:\n${failed
-          .map((f) => `${f.code}: ${f.reason}`)
-          .join("\n")}`;
-      }
+      const caption = `Đã tạo ${packages.length} mã bao`;
 
       if (config.server.publicBaseUrl) {
         const url = `${config.server.publicBaseUrl}/print/${saveLabel(html)}`;

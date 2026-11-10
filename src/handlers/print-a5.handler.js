@@ -1,5 +1,8 @@
 import { InlineKeyboard } from "grammy";
-import { getPrintA5Url } from "../services/print-a5.service.js";
+import {
+  getPrintA5Url,
+  validatePrintA5Codes,
+} from "../services/print-a5.service.js";
 
 export function printA5Handler(bot) {
   bot.on("message:text", async (ctx, next) => {
@@ -10,10 +13,9 @@ export function printA5Handler(bot) {
     if (lastLine !== "in") return next();
 
     const orderLines = lines.slice(0, -1);
-    const invalidLine = orderLines.find((line) => !/^GY[A-Z0-9]+$/i.test(line));
 
-    if (invalidLine || orderLines.length === 0) {
-      return ctx.reply("Không tìm thấy mã đơn hợp lệ.");
+    if (orderLines.length === 0) {
+      return ctx.reply("Vui lòng nhập ít nhất một mã đơn trước chữ In.");
     }
 
     const orderCodes = [
@@ -21,6 +23,15 @@ export function printA5Handler(bot) {
     ];
 
     try {
+      const failed = await validatePrintA5Codes(orderCodes);
+      if (failed.length > 0) {
+        return ctx.reply(
+          `Không in được ${failed.length} mã đơn:\n${failed
+            .map((item) => `${item.code}: ${item.reason}`)
+            .join("\n")}`,
+        );
+      }
+
       const printUrl = await getPrintA5Url(orderCodes);
 
       await ctx.reply("In A5", {

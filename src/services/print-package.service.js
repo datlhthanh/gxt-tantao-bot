@@ -31,6 +31,9 @@ export async function getPackage(packageCode) {
 
   const pkg = json.data?.[0];
   if (!pkg) throw new Error("Không tìm thấy bao");
+  if (String(pkg.code).toUpperCase() !== packageCode.toUpperCase()) {
+    throw new Error("Mã bao không tồn tại");
+  }
 
   return {
     code: pkg.code,
