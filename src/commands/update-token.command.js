@@ -45,7 +45,7 @@ export function updateTokenCommand(bot) {
       );
     }
 
-    saveToken(parsed.token);
+    await saveToken(parsed.token, String(ctx.from.id));
 
     const expiry = parsed.expiresAt
       ? `\nHết hạn: ${formatVN(parsed.expiresAt.toISOString())}`

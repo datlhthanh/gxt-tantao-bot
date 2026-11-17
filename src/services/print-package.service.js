@@ -18,7 +18,7 @@ export async function getPackage(packageCode) {
   const res = await fetch(url, {
     headers: {
       accept: "application/json",
-      authorization: getToken(),
+      authorization: await getToken(),
     },
     signal: AbortSignal.timeout(10_000),
   });

@@ -1,32 +1,34 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { MongoClient } from "mongodb";
 import { config, withBearer } from "../app.config.js";
 
 const JWT_REGEX = /^(?:Bearer\s+)?([\w-]+\.([\w-]+)\.[\w-]+)$/;
+const client = new MongoClient(config.mongodb.uri);
+const tokens = client
+  .db(config.mongodb.database)
+  .collection("auth_tokens");
 
-let current = load();
+let connection;
 
-function load() {
-  try {
-    const saved = JSON.parse(readFileSync(config.tokenFile, "utf-8"));
-    if (saved.token) return saved.token;
-  } catch (error) {
-    if (error.code !== "ENOENT") {
-      throw new Error(`Không đọc được file token: ${error.message}`, {
-        cause: error,
-      });
-    }
+async function getCollection() {
+  if (!connection) {
+    connection = client.connect().then(() => tokens);
   }
-  const seed = process.env.AUTHORIZATION_TOKEN?.trim();
-  return seed ? withBearer(seed) : null;
+  return connection;
 }
 
 // báo lỗi nếu chư có token
-export function getToken() {
-  if (!current) {
+export async function getToken() {
+  const collection = await getCollection();
+  const saved = await collection.findOne(
+    { key: config.mongodb.tokenKey },
+    { projection: { token: 1 } },
+  );
+
+  if (!saved?.token) {
     throw new Error("Chưa có token GHN. Dùng /updatetoken để cài đặt.");
   }
-  return current;
+
+  return saved.token;
 }
 
 /**
@@ -52,13 +54,18 @@ export function parseToken(raw) {
   return { ok: true, token: withBearer(match[1]), expiresAt };
 }
 
-// lưu lại token và file
-export function saveToken(token) {
-  current = token;
-  mkdirSync(dirname(config.tokenFile), { recursive: true });
-  writeFileSync(
-    config.tokenFile,
-    JSON.stringify({ token, updatedAt: new Date().toISOString() }),
-    { mode: 0o600 },
+// lưu lại token vào MongoDB
+export async function saveToken(token, updatedBy = "system") {
+  const collection = await getCollection();
+  await collection.updateOne(
+    { key: config.mongodb.tokenKey },
+    {
+      $set: {
+        token,
+        updatedAt: new Date(),
+        updatedBy,
+      },
+    },
+    { upsert: true },
   );
 }

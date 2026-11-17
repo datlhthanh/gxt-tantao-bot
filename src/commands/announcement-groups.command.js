@@ -1,4 +1,4 @@
-import { ALLOWED_USER_ID } from "../constants.js";
+import { ALLOWED_USER_ID } from "../utils/constants.utils.js";
 import {
   addAnnouncementGroup,
   listAnnouncementGroups,
